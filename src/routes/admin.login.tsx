@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { ensureFirstAdminRole } from "./api.ensure-first-admin.server";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({ meta: [{ title: "Admin Login — TrustOn" }, { name: "robots", content: "noindex" }] }),
@@ -26,12 +27,28 @@ function AdminLoginPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { error, data } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
         if (error) throw error;
+        
+        // Ensure the first user gets admin role
+        if (data.user) {
+          try {
+            await ensureFirstAdminRole(data.user.id);
+          } catch (roleError) {
+            console.error("Error ensuring admin role:", roleError);
+          }
+        }
+
+        // Wait for role to be assigned
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Refresh session to get the latest auth state
+        await supabase.auth.refreshSession();
+        
         toast.success("Account created. You are now the admin.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -39,6 +56,7 @@ function AdminLoginPage() {
       }
     } catch (err) {
       toast.error((err as Error).message);
+      console.error("Auth error:", err);
     } finally {
       setBusy(false);
     }
