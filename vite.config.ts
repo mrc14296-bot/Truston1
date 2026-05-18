@@ -6,4 +6,14 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      host: "0.0.0.0",
+      allowedHosts: ["truston1.onrender.com"],
+    },
+    preview: {
+      host: "0.0.0.0",
+      allowedHosts: ["truston1.onrender.com"],
+    },
+  },
 });
