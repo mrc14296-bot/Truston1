@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Link, useLocation } from "@tanstack/react-router";
 
 const services = [
@@ -10,8 +11,8 @@ const services = [
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "About", to: "/about-us" },
-  { label: "Project", to: "/project" },
+  { label: "About Us", to: "/about-us" },
+  { label: "Projects", to: "/project" },
   { label: "Partner", to: "/channel-partner" },
   { label: "Contact", to: "/contact" },
 ] as const;
@@ -31,62 +32,65 @@ export function LuxeNav() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const isTransparent = !scrolled && !open;
+
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 bg-white ${
-        scrolled ? "shadow-md" : "shadow-sm"
+    <motion.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.9, delay: 3.0, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white shadow-md"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between h-[72px]">
+        <div className={`flex items-center justify-between transition-all duration-500 ${scrolled ? "h-[68px]" : "h-[80px]"}`}>
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 shrink-0">
             <img
               src="/logo.png"
               alt="TrustOn Logo"
-              className="h-11 w-auto object-contain"
+              className={`w-auto object-contain transition-all duration-500 ${scrolled ? "h-10" : "h-12 brightness-110"}`}
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-[var(--bronze)] text-lg font-bold tracking-widest uppercase" style={{fontFamily: "Inter, sans-serif"}}>TrustOn</span>
-              <span className="text-[9px] uppercase tracking-[0.3em] text-gray-500 font-medium">Premium Estate</span>
+              <span
+                className={`text-lg font-bold tracking-widest uppercase transition-colors duration-500 ${isTransparent ? "text-white" : "text-[var(--bronze)]"}`}
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
+                TrustOn
+              </span>
+              <span className={`text-[9px] uppercase tracking-[0.35em] font-medium transition-colors duration-500 ${isTransparent ? "text-white/50" : "text-gray-400"}`}>
+                Premium Estate
+              </span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            <Link
-              to="/"
-              className="px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-              activeProps={{ className: "text-[var(--bronze)]" }}
-            >
-              Home
-              <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </Link>
-
-            <Link
-              to="/about-us"
-              className="px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-              activeProps={{ className: "text-[var(--bronze)]" }}
-            >
-              About Us
-              <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </Link>
-
-            <Link
-              to="/project"
-              className="px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-              activeProps={{ className: "text-[var(--bronze)]" }}
-            >
-              Projects
-              <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </Link>
+            {[navLinks[0], navLinks[1], navLinks[2]].map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`px-4 py-2 text-[13px] font-medium transition-colors duration-300 relative group ${
+                  isTransparent
+                    ? "text-white/85 hover:text-white"
+                    : "text-gray-700 hover:text-[var(--bronze)]"
+                }`}
+                activeProps={{ className: isTransparent ? "text-white" : "text-[var(--bronze)]" }}
+              >
+                {l.label}
+                <span className={`absolute bottom-0 left-4 right-4 h-[2px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${isTransparent ? "bg-white" : "bg-[var(--bronze)]"}`} />
+              </Link>
+            ))}
 
             {/* Services Dropdown */}
             <div
@@ -96,22 +100,25 @@ export function LuxeNav() {
             >
               <Link
                 to="/services"
-                className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-                activeProps={{ className: "text-[var(--bronze)]" }}
+                className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors duration-300 relative group ${
+                  isTransparent
+                    ? "text-white/85 hover:text-white"
+                    : "text-gray-700 hover:text-[var(--bronze)]"
+                }`}
+                activeProps={{ className: isTransparent ? "text-white" : "text-[var(--bronze)]" }}
               >
                 Services
                 <svg
                   className={`w-3 h-3 transition-transform duration-200 ${svcOpen ? "rotate-180" : ""}`}
                   fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M1 1L5 6.5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1 1L5 6.5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                <span className={`absolute bottom-0 left-4 right-4 h-[2px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${isTransparent ? "bg-white" : "bg-[var(--bronze)]"}`} />
               </Link>
 
-              {/* Dropdown */}
               <div
-                className={`absolute left-0 top-full w-56 bg-white shadow-xl border border-gray-100 rounded-sm overflow-hidden transition-all duration-200 ${
+                className={`absolute left-0 top-full w-56 bg-white shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
                   svcOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
                 }`}
               >
@@ -134,29 +141,31 @@ export function LuxeNav() {
               </div>
             </div>
 
-            <Link
-              to="/channel-partner"
-              className="px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-              activeProps={{ className: "text-[var(--bronze)]" }}
-            >
-              Partner
-              <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </Link>
-
-            <Link
-              to="/contact"
-              className="px-4 py-2 text-[13px] font-medium text-gray-700 hover:text-[var(--bronze)] transition-colors duration-200 relative group"
-              activeProps={{ className: "text-[var(--bronze)]" }}
-            >
-              Contact
-              <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--bronze)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </Link>
+            {navLinks.slice(3).map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`px-4 py-2 text-[13px] font-medium transition-colors duration-300 relative group ${
+                  isTransparent
+                    ? "text-white/85 hover:text-white"
+                    : "text-gray-700 hover:text-[var(--bronze)]"
+                }`}
+                activeProps={{ className: isTransparent ? "text-white" : "text-[var(--bronze)]" }}
+              >
+                {l.label}
+                <span className={`absolute bottom-0 left-4 right-4 h-[2px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${isTransparent ? "bg-white" : "bg-[var(--bronze)]"}`} />
+              </Link>
+            ))}
           </nav>
 
           {/* CTA Button */}
           <Link
             to="/contact"
-            className="hidden lg:inline-flex items-center gap-2 bg-[var(--bronze)] text-white px-6 py-2.5 text-[12px] font-semibold uppercase tracking-widest hover:opacity-90 transition-opacity duration-200 rounded-sm shadow-sm"
+            className={`hidden lg:inline-flex items-center gap-2 px-6 py-2.5 text-[12px] font-semibold uppercase tracking-widest transition-all duration-500 ${
+              isTransparent
+                ? "border border-white/50 text-white hover:bg-white hover:text-[var(--ink)]"
+                : "bg-[var(--bronze)] text-white hover:opacity-90 shadow-sm"
+            }`}
           >
             Enquire Now
           </Link>
@@ -167,9 +176,9 @@ export function LuxeNav() {
             onClick={() => setOpen((v) => !v)}
             className="lg:hidden flex flex-col justify-center gap-[5px] w-9 h-9"
           >
-            <span className={`block w-6 h-[2px] bg-gray-800 transition-all duration-300 ${open ? "rotate-45 translate-y-[7px]" : ""}`} />
-            <span className={`block w-6 h-[2px] bg-gray-800 transition-all duration-300 ${open ? "opacity-0" : ""}`} />
-            <span className={`block w-6 h-[2px] bg-gray-800 transition-all duration-300 ${open ? "-rotate-45 -translate-y-[7px]" : ""}`} />
+            <span className={`block w-6 h-[2px] transition-all duration-300 ${open ? "rotate-45 translate-y-[7px]" : ""} ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`} />
+            <span className={`block w-6 h-[2px] transition-all duration-300 ${open ? "opacity-0" : ""} ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`} />
+            <span className={`block w-6 h-[2px] transition-all duration-300 ${open ? "-rotate-45 -translate-y-[7px]" : ""} ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`} />
           </button>
         </div>
       </div>
@@ -192,7 +201,6 @@ export function LuxeNav() {
             </Link>
           ))}
 
-          {/* Mobile Services Accordion */}
           <div className="border-b border-gray-100">
             <button
               className="w-full flex items-center justify-between py-3.5 text-[14px] font-medium text-gray-800"
@@ -203,7 +211,7 @@ export function LuxeNav() {
                 className={`w-4 h-4 transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`}
                 fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M1 1L5 6.5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M1 1L5 6.5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             {mobileServicesOpen && (
@@ -236,12 +244,12 @@ export function LuxeNav() {
 
           <Link
             to="/contact"
-            className="mt-4 mb-4 inline-flex justify-center bg-[var(--bronze)] text-white px-6 py-3 text-[12px] font-semibold uppercase tracking-widest rounded-sm"
+            className="mt-4 mb-4 inline-flex justify-center bg-[var(--bronze)] text-white px-6 py-3 text-[12px] font-semibold uppercase tracking-widest"
           >
             Enquire Now
           </Link>
         </nav>
       </div>
-    </header>
+    </motion.header>
   );
 }

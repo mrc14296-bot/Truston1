@@ -10,6 +10,7 @@ import {
 import { LuxeNav } from "@/components/LuxeNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { IntroScreen } from "@/components/IntroScreen";
 
 import appCss from "../styles.css?url";
 
@@ -116,6 +117,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <IntroScreen />
       <LuxeNav />
       <main className="min-h-screen">
         <Outlet />
