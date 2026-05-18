@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ProjectRouteImport } from './routes/project'
 import { Route as PlotSellingRouteImport } from './routes/plot-selling'
 import { Route as InvestmentConsultingRouteImport } from './routes/investment-consulting'
@@ -20,6 +21,11 @@ import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectRoute = ProjectRouteImport.update({
   id: '/project',
   path: '/project',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/investment-consulting': typeof InvestmentConsultingRoute
   '/plot-selling': typeof PlotSellingRoute
   '/project': typeof ProjectRoute
+  '/services': typeof ServicesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/investment-consulting': typeof InvestmentConsultingRoute
   '/plot-selling': typeof PlotSellingRoute
   '/project': typeof ProjectRoute
+  '/services': typeof ServicesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/investment-consulting': typeof InvestmentConsultingRoute
   '/plot-selling': typeof PlotSellingRoute
   '/project': typeof ProjectRoute
+  '/services': typeof ServicesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/investment-consulting'
     | '/plot-selling'
     | '/project'
+    | '/services'
     | '/projects/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/investment-consulting'
     | '/plot-selling'
     | '/project'
+    | '/services'
     | '/projects/$slug'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/investment-consulting'
     | '/plot-selling'
     | '/project'
+    | '/services'
     | '/projects/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -157,11 +169,19 @@ export interface RootRouteChildren {
   InvestmentConsultingRoute: typeof InvestmentConsultingRoute
   PlotSellingRoute: typeof PlotSellingRoute
   ProjectRoute: typeof ProjectRoute
+  ServicesRoute: typeof ServicesRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/project': {
       id: '/project'
       path: '/project'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   InvestmentConsultingRoute: InvestmentConsultingRoute,
   PlotSellingRoute: PlotSellingRoute,
   ProjectRoute: ProjectRoute,
+  ServicesRoute: ServicesRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
 }
 export const routeTree = rootRouteImport
