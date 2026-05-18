@@ -95,7 +95,7 @@ function ContentPanel() {
   const save = async () => {
     if (!current) return;
     setBusy(true);
-    const { error } = await supabase.from("site_content").update({ data: draft }).eq("id", current.id);
+    const { error } = await supabase.from("site_content").update({ data: draft as never }).eq("id", current.id);
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Saved");
