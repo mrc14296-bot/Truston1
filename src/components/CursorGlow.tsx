@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 export function CursorGlow() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia?.("(pointer: coarse)").matches) return;

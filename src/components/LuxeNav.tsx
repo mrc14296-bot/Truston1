@@ -28,6 +28,7 @@ export function LuxeNav() {
     setSvcOpen(false);
   }, [loc.pathname]);
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

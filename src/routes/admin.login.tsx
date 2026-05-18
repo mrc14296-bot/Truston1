@@ -38,11 +38,12 @@ function AdminLoginPage() {
     e.preventDefault();
     setBusy(true);
     try {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
+          options: { emailRedirectTo: `${origin}/admin` },
         });
         if (error) throw error;
         
