@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "@tanstack/react-router";
 
+const services = [
+  { label: "Plot Selling", to: "/plot-selling" },
+  { label: "Architecture & Design", to: "/architecture-design" },
+  { label: "Construction & Build", to: "/construction-build" },
+  { label: "Investment Consulting", to: "/investment-consulting" },
+] as const;
+
 const leftLinks = [
   { label: "ABOUT", to: "/about-us" },
   { label: "COMMUNITIES", to: "/project" },
@@ -15,50 +22,33 @@ const rightLinks = [
 ] as const;
 
 export function SobhaStyleNav() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [svcOpen, setSvcOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const loc = useLocation();
 
   useEffect(() => {
     setOpen(false);
+    setSvcOpen(false);
+    setMobileServicesOpen(false);
   }, [loc.pathname]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const isTransparent = !scrolled && !open;
 
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled ? "bg-white shadow-lg" : "bg-transparent"
-      }`}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 bg-transparent`}
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <div
-          className={`flex items-center justify-between transition-all duration-500 ${
-            scrolled ? "h-[70px]" : "h-[100px]"
-          }`}
-        >
+        <div className={`flex items-center justify-between transition-all duration-500 h-[100px]`}>
           {/* Left Nav */}
           <nav className="hidden lg:flex items-center gap-8 flex-1">
             {leftLinks.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
-                className={`text-[12px] font-semibold tracking-[0.15em] transition-colors duration-300 relative group ${
-                  isTransparent
-                    ? "text-white/90 hover:text-white"
-                    : "text-gray-800 hover:text-[var(--bronze)]"
-                }`}
+                className={`text-[12px] font-semibold tracking-[0.15em] transition-colors duration-300 relative group text-white/90 hover:text-white`}
               >
                 {l.label}
               </Link>
@@ -71,9 +61,7 @@ export function SobhaStyleNav() {
               <img
                 src="/logo.png"
                 alt="Logo"
-                className={`w-auto object-contain transition-all duration-500 ${
-                  scrolled ? "h-10" : "h-14 brightness-110"
-                }`}
+                className={`w-auto h-14 object-contain brightness-110`}
               />
             </Link>
           </div>
@@ -81,15 +69,67 @@ export function SobhaStyleNav() {
           {/* Right Nav */}
           <div className="hidden lg:flex items-center justify-end gap-8 flex-1">
             <nav className="flex items-center gap-8">
+              {/* Services Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setSvcOpen(true)}
+                onMouseLeave={() => setSvcOpen(false)}
+              >
+                <button
+                  className={`flex items-center gap-1 text-[12px] font-semibold tracking-[0.15em] transition-colors duration-300 relative group text-white/90 hover:text-white`}
+                >
+                  SERVICES
+                  <svg
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      svcOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    viewBox="0 0 10 8"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1 1L5 6.5L9 1"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                <div
+                  className={`absolute left-0 top-full w-56 bg-white shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                    svcOpen
+                      ? "opacity-100 translate-y-0 pointer-events-auto"
+                      : "opacity-0 -translate-y-2 pointer-events-none"
+                  }`}
+                >
+                  <Link
+                    to="/services"
+                    className="block px-5 py-3 text-[12px] font-semibold text-[var(--bronze)] border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  >
+                    All Services →
+                  </Link>
+                  {services.map((s) => (
+                    <Link
+                      key={s.to}
+                      to={s.to}
+                      className="block px-5 py-3 text-[13px] text-gray-700 hover:text-[var(--bronze)] hover:bg-gray-50 border-b border-gray-50 transition-colors last:border-0"
+                      activeProps={{
+                        className: "text-[var(--bronze)] bg-gray-50",
+                      }}
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               {rightLinks.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
-                  className={`text-[12px] font-semibold tracking-[0.15em] transition-colors duration-300 relative group ${
-                    isTransparent
-                      ? "text-white/90 hover:text-white"
-                      : "text-gray-800 hover:text-[var(--bronze)]"
-                  }`}
+                  className={`text-[12px] font-semibold tracking-[0.15em] transition-colors duration-300 relative group text-white/90 hover:text-white`}
                 >
                   {l.label}
                 </Link>
@@ -97,7 +137,7 @@ export function SobhaStyleNav() {
             </nav>
             
             {/* Icons */}
-            <div className={`flex items-center gap-5 ${isTransparent ? "text-white" : "text-gray-800"}`}>
+            <div className={`flex items-center gap-5 text-white`}>
               <button className="hover:opacity-70 transition-opacity">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -127,17 +167,17 @@ export function SobhaStyleNav() {
             <span
               className={`block w-6 h-[2px] transition-all duration-300 ${
                 open ? "rotate-45 translate-y-[7px]" : ""
-              } ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`}
+              } bg-white`}
             />
             <span
               className={`block w-6 h-[2px] transition-all duration-300 ${
                 open ? "opacity-0" : ""
-              } ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`}
+              } bg-white`}
             />
             <span
               className={`block w-6 h-[2px] transition-all duration-300 ${
                 open ? "-rotate-45 -translate-y-[7px]" : ""
-              } ${isTransparent && !open ? "bg-white" : "bg-gray-800"}`}
+              } bg-white`}
             />
           </button>
         </div>
@@ -152,11 +192,67 @@ export function SobhaStyleNav() {
         }`}
       >
         <nav className="flex flex-col px-6 py-4">
-          {[...leftLinks, ...rightLinks].map((l) => (
+          {leftLinks.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               className="py-4 text-[13px] font-bold tracking-widest text-gray-800 hover:text-[var(--bronze)] border-b border-gray-50 transition-colors"
+              activeProps={{ className: "text-[var(--bronze)]" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <div className="border-b border-gray-100">
+            <button
+              className="w-full flex items-center justify-between py-4 text-[13px] font-bold tracking-widest text-gray-800"
+              onClick={() => setMobileServicesOpen((v) => !v)}
+            >
+              SERVICES
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  mobileServicesOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                viewBox="0 0 10 8"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L5 6.5L9 1"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            {mobileServicesOpen && (
+              <div className="pb-2 pl-3 flex flex-col gap-1">
+                <Link
+                  to="/services"
+                  className="py-2 text-[13px] text-[var(--bronze)] font-semibold"
+                >
+                  All Services →
+                </Link>
+                {services.map((s) => (
+                  <Link
+                    key={s.to}
+                    to={s.to}
+                    className="py-2 text-[13px] text-gray-600 hover:text-[var(--bronze)] transition-colors"
+                    activeProps={{ className: "text-[var(--bronze)]" }}
+                  >
+                    — {s.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {rightLinks.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="py-4 text-[13px] font-bold tracking-widest text-gray-800 hover:text-[var(--bronze)] border-b border-gray-50 last:border-0 transition-colors"
               activeProps={{ className: "text-[var(--bronze)]" }}
             >
               {l.label}
