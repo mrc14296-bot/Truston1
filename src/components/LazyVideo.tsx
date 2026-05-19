@@ -3,25 +3,21 @@ import { useEffect, useRef, useState } from "react";
 export type VideoSource = { src: string; type?: string; media?: string };
 
 interface LazyVideoProps {
-  /** Optional video sources (mp4/webm). If empty, only the poster is rendered. */
   sources?: VideoSource[];
-  /** Poster / fallback image — always rendered first, kept as a stand-in if video fails. */
   poster: string;
   alt: string;
   className?: string;
-  /** Class on the inner <video>/<img> element. */
   mediaClassName?: string;
-  /** Kicks in autoplay + load only when this fraction of the element is visible. */
   threshold?: number;
 }
 
 /**
  * Optimized cinematic background media.
- * - Renders the poster image immediately (instant LCP, native lazy loading off-screen)
- * - Defers video load until the element is in the viewport (IntersectionObserver)
- * - Skips video entirely on Save-Data, reduced-motion, or slow connections
- * - Supports multiple <source> variants (webm + mp4, and per-media art-direction)
- * - Gracefully falls back to the poster on error or when no sources are provided
+ * - Starts with poster image on both server and client (no hydration mismatch)
+ * - After mount, checks device/connection capabilities before loading video
+ * - Defers video load until the element is in the viewport
+ * - Skips video on Save-Data, reduced-motion, slow connections, or no sources
+ * - Falls back gracefully to poster on error
  */
 export function LazyVideo({
   sources = [],
@@ -32,28 +28,25 @@ export function LazyVideo({
   threshold = 0.15,
 }: LazyVideoProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [allowVideo, setAllowVideo] = useState(false); // MUST start false — matches SSR
   const [shouldLoad, setShouldLoad] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
-  // Decide if we should attempt video at all
-  const allowVideo = (() => {
-    if (typeof window === "undefined") return false;
-    if (sources.length === 0) return false;
+  // Step 1: after mount, decide if this device/connection supports video.
+  // Runs only on the client, so there is no SSR/hydration mismatch.
+  useEffect(() => {
+    if (sources.length === 0) return;
     const nav = navigator as Navigator & {
       connection?: { saveData?: boolean; effectiveType?: string };
     };
-    if (nav.connection?.saveData) return false;
-    if (
-      nav.connection?.effectiveType &&
-      ["slow-2g", "2g"].includes(nav.connection.effectiveType)
-    )
-      return false;
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return false;
-    return true;
-  })();
+    if (nav.connection?.saveData) return;
+    if (nav.connection?.effectiveType && ["slow-2g", "2g"].includes(nav.connection.effectiveType)) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    setAllowVideo(true);
+  }, [sources.length]);
 
+  // Step 2: once video is allowed, watch for intersection to actually load it
   useEffect(() => {
     if (!allowVideo) return;
     const el = wrapRef.current;
@@ -75,7 +68,7 @@ export function LazyVideo({
 
   return (
     <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
-      {/* Poster is always present — instant fallback, stays under the video */}
+      {/* Poster always present — server render, LCP, and video fallback */}
       <img
         src={poster}
         alt={alt}
@@ -87,12 +80,11 @@ export function LazyVideo({
       />
       {allowVideo && shouldLoad && !videoFailed && (
         <video
-          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           poster={poster}
           onCanPlay={() => setVideoReady(true)}
           onError={() => setVideoFailed(true)}
