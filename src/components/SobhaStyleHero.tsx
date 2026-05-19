@@ -1,7 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, type ReactNode } from "react";
 import { LazyVideo, type VideoSource } from "./LazyVideo";
-import { Luxury3DScene } from "./Luxury3DScene";
 
 interface SobhaStyleHeroProps {
   eyebrow?: string;
@@ -75,7 +74,6 @@ function CornerAccent({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
 }
 
 export function SobhaStyleHero({
-  eyebrow,
   title,
   subtitle,
   poster,
@@ -93,7 +91,6 @@ export function SobhaStyleHero({
   // Enhanced parallax effects
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
 
@@ -130,9 +127,6 @@ export function SobhaStyleHero({
           mediaClassName="ken-burns"
         />
       </motion.div>
-
-      {/* 3D Scene */}
-      <Luxury3DScene />
 
       {/* Dark gradient overlay with smooth transition */}
       <div
@@ -195,33 +189,12 @@ export function SobhaStyleHero({
           isFull ? "justify-end pb-28" : "justify-end pb-20 pt-32"
         }`}
       >
-        {eyebrow && (
-          <motion.p
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 1,
-              delay: isFull ? 3.2 : 0.3,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="text-[var(--bronze)] text-[11px] uppercase tracking-luxe mb-6 flex items-center gap-3"
-          >
-            <motion.span
-              className="inline-block h-px bg-[var(--bronze)]"
-              initial={{ width: 0 }}
-              animate={{ width: 40 }}
-              transition={{ duration: 0.8, delay: isFull ? 3.4 : 0.5 }}
-            />
-            {eyebrow}
-          </motion.p>
-        )}
-
         <motion.h1
           initial={{ opacity: 0, y: 60, filter: "blur(12px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{
             duration: 1.3,
-            delay: isFull ? 3.3 : 0.4,
+            delay: isFull ? 0.5 : 0.4,
             ease: [0.16, 1, 0.3, 1],
           }}
           className={`font-display text-white leading-[0.93] tracking-tight ${
@@ -237,7 +210,7 @@ export function SobhaStyleHero({
             animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: 1.1,
-              delay: isFull ? 3.6 : 0.6,
+              delay: isFull ? 0.8 : 0.6,
               ease: [0.16, 1, 0.3, 1],
             }}
             className="text-white/70 mt-8 max-w-2xl text-lg leading-relaxed"
@@ -252,7 +225,7 @@ export function SobhaStyleHero({
             animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: 1.1,
-              delay: isFull ? 3.8 : 0.8,
+              delay: isFull ? 1.0 : 0.8,
               ease: [0.16, 1, 0.3, 1],
             }}
             className="mt-10 flex flex-wrap items-center gap-6"
@@ -267,7 +240,7 @@ export function SobhaStyleHero({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{
-              delay: isFull ? 4.2 : 1.2,
+              delay: isFull ? 1.5 : 1.2,
               duration: 1,
             }}
             className="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-3"

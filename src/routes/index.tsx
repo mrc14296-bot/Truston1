@@ -38,32 +38,11 @@ function Index() {
       <CursorGlow />
       <SobhaStyleHero
         height="full"
-        eyebrow="Luxury Real Estate — Lucknow"
-        title={
-          <>
-            Own the <em className="gradient-bronze-text not-italic font-display">Ground.</em>
-            <br />
-            Build the <span className="font-display italic">Legacy.</span>
-          </>
-        }
+        title=""
         poster={heroImg}
         videoSources={[{ src: "/intro-video.mp4", type: "video/mp4" }]}
         alt="Aerial view of Prime Estate township at twilight"
-      >
-        <Link
-          to="/project"
-          className="group inline-flex items-center gap-4 bg-[var(--bronze)] text-white px-10 py-4 text-[11px] uppercase tracking-[0.25em] hover:bg-white hover:text-[var(--ink)] transition-all duration-500 shadow-luxe"
-        >
-          Explore Projects
-          <span className="transition-transform duration-500 group-hover:translate-x-2">→</span>
-        </Link>
-        <Link
-          to="/contact"
-          className="text-[11px] uppercase tracking-[0.25em] text-white/80 hover:text-[var(--bronze)] transition-all duration-500 border-b border-white/30 hover:border-[var(--bronze)] pb-0.5"
-        >
-          Private Consultation
-        </Link>
-      </SobhaStyleHero>
+      />
 
       <Marquee />
       <StatsBar />
@@ -384,11 +363,11 @@ function AboutPrime() {
             <span className="inline-block w-10 h-px bg-[var(--bronze)]" />
             Own the Ground. Build Your Legacy.
           </p>
-          <h2 className="font-display text-5xl md:text-6xl leading-tight mb-8">
+          <h2 className="font-display text-5xl md:text-6xl leading-tight mb-8 text-gray-900">
             Prime Estate — where <em className="gradient-bronze-text not-italic">imagination</em>{" "}
             takes shape.
           </h2>
-          <p className="text-foreground/60 text-lg leading-relaxed mb-10">
+          <p className="text-gray-700 text-lg leading-relaxed mb-10">
             Prime Estate is a trusted name in real estate development, built on a foundation of
             transparency, quality, and long-term vision. We don't just sell land — we craft
             opportunities. Our flagship project is a Jila Panchayat approved township that combines
@@ -415,7 +394,7 @@ function AboutPrime() {
                 <p className="text-[var(--bronze)] text-[10px] uppercase tracking-widest mb-3">
                   {card.title}
                 </p>
-                <p className="font-serif text-lg leading-snug text-foreground/70">{card.body}</p>
+                <p className="font-serif text-lg leading-snug text-gray-800">{card.body}</p>
               </motion.div>
             ))}
           </div>
